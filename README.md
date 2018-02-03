@@ -1,13 +1,5 @@
 django rest api
 
-
- 
-pip 
-```bash
-pip install xapi
-```
-
-
 ## eg
 
 ```bash
@@ -93,5 +85,7 @@ urlpatterns = [
     ......
     url(r'api/', include(xapi.site.urls)),
 ]
-```
+
+# web docs
+open http://localhost:8000/api/docs
 
