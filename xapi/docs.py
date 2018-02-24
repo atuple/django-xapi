@@ -4,7 +4,7 @@ from markdown import markdown
 
 
 class HomePageView(TemplateView):
-    template_name = "home.html"
+    template_name = "xapi/home.html"
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data()
@@ -13,7 +13,7 @@ class HomePageView(TemplateView):
 
 
 class RoutePageView(TemplateView):
-    template_name = "route.html"
+    template_name = "xapi/route.html"
 
     def route_path(self, route):
         return self.request.path.split("docs")[0] + route.path + "/" + route.version
