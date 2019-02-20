@@ -1,10 +1,13 @@
+# coding: utf-8
+
 import time
 import datetime
+from functools import partial
 
 try:
     from django.utils import timezone
 except ImportError:
-    raise RuntimeError('Django is required for Django Xapi.')
+    raise RuntimeError('Django is required for django simple serializer.')
 
 
 class TimeFormatFactory(object):
@@ -12,7 +15,7 @@ class TimeFormatFactory(object):
         super(TimeFormatFactory, self).__init__()
 
     @staticmethod
-    def datetime_to_string(datetime_time, time_format='%Y-%m-%d %H:%M'): #%Y-%m-%d %H:%M:%S
+    def datetime_to_string(datetime_time, time_format='%Y-%m-%d %H:%M:%S'):
         if isinstance(datetime_time, datetime.datetime):
             if datetime_time.tzinfo:
                 datetime_time = datetime_time.astimezone(timezone.get_current_timezone())
@@ -39,7 +42,3 @@ class TimeFormatFactory(object):
             return TimeFormatFactory.datetime_to_timestamp
         else:
             return TimeFormatFactory.datetime_to_string
-
-    @staticmethod
-    def string_to_date(string_date):
-        return datetime.datetime.strptime(string_date, '%Y-%m-%d')

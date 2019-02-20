@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.conf.urls import url, include
-
-
+from django.urls import path
 class XApiSite(object):
     def __init__(self):
         self.routes = []
@@ -12,15 +11,15 @@ class XApiSite(object):
         # add docs view
         if settings.DEBUG:
             urlpatterns += [
-                url(r'docs/', include('xapi.urls')),
+                url(r'docs/', ('xapi.urls', 'xapi', 'xapi')),
             ]
         # add routes view
         for r in self.routes:
             urlpatterns += [
-                url(r.path + "/" + r.version, include(r.urls))
+                url(r.path + "/" + r.version, r.urls)
             ]
 
-        return urlpatterns
+        return urlpatterns,"xapi","xapi"
 
     def register(self, route):
         self.routes += [route]
@@ -50,7 +49,7 @@ class Router(object):
         urlpatterns = []
         for v in self.registry_views:
             urlpatterns += [url(v.path, v.as_view(), name=v.title)]
-        return urlpatterns
+        return urlpatterns, 'route', "route"
 
     @property
     def register(self):

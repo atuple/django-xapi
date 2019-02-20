@@ -1,6 +1,6 @@
 VERSION = (0, 1, 0)
 
-from xapi.sites import XApiSite, site
+from .sites import XApiSite, site
 
 
 class Settings(object):

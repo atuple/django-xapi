@@ -34,6 +34,7 @@ class ModelListApi(ModelBaseApi, BaseListView):
     model = None
     filter_fields = "ALL"
     filter_fields_exclude = []
+    ordering = ["-id"]
 
     def get_count_query(self):
         return self.count_query
@@ -70,7 +71,11 @@ class ModelListApi(ModelBaseApi, BaseListView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        return self.get_queryset_filter(qs)
+        qs = self.get_queryset_filter(qs)
+        if self.request.GET.get("order_by"):
+            order_by = self.request.GET["order_by"].split(",")
+            qs = qs.order_by(*order_by)
+        return qs
 
     def get_queryset_filter(self, qs):
         filters = {}
@@ -87,6 +92,10 @@ class ModelListApi(ModelBaseApi, BaseListView):
                 elif f in filter_fields and f not in self.filter_fields_exclude:
                     if isinstance(self.model._meta.get_field(f), models.ForeignKey):
                         filters[k] = self.params_value_inspect(f, v, "")
+        for k, v in filters.items():
+            if "lte" in k and isinstance(v, datetime.datetime):
+                if v.hour == 0:
+                    filters[k] = v + datetime.timedelta(minutes=59,hours=23)
         qs = qs.filter(**filters)
         return qs
 

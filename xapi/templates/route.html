@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="/static/xapi/css/bootstrap.css" rel="stylesheet">
+</head>
+
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/api/docs">Xapi Docs</a>
+        </div>
+        {#        <div id="navbar" class="navbar-collapse collapse">#}
+        {#            <form class="navbar-form navbar-right">#}
+        {#                <div class="form-group">#}
+        {#                    <input type="text" placeholder="Email" class="form-control">#}
+        {#                </div>#}
+        {#                <div class="form-group">#}
+        {#                    <input type="password" placeholder="Password" class="form-control">#}
+        {#                </div>#}
+        {#                <button type="submit" class="btn btn-success">Sign in</button>#}
+        {#            </form>#}
+        {#        </div><!--/.navbar-collapse -->#}
+    </div>
+</nav>
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron" style="height: 90px">
+    <div style="text-align: center; padding-top: 20px">
+        路由: {{ route.title }}
+        路径: {{ route.path }}
+        版本: {{ route.version }}
+        接口数量: {{ route.registry_views | length }}
+        说明: {{ route.des }}
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 sidebar">
+            <ul class="list-group">
+                {% for i in views %}
+                    <li class="list-group-item"><a href="/api/docs/route/{{rid}}/{{i.vid}}">{{ i.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-10 main">
+            {% if view %}
+            <div class="bs-example" data-example-id="hoverable-table">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th width="150">接口名</th>
+                        <th>{{ view.title }}</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr>
+                        <td>地址</td>
+                        <td>{{ route_path }}/{{ view.path }}</td>
+                    </tr>
+                    <tr>
+                        <td>方法</td>
+                        <td>{% for i in view.method %} {{ i }}{% endfor %}</td>
+                    </tr>
+                    <tr>
+                        <td>说明</td>
+                        <td><p>{% autoescape off %}{{ view.des }} {% endautoescape %}</p></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+</body>
+<script src="/static/xapi/js/bootstrap.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+
+</html>
