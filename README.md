@@ -1,4 +1,9 @@
-django rest api
+django rest api ~
+
+only running in django >= 2.0
+
+author: Sai
+email: 3030159@qq.com 
 
 ## eg
 
