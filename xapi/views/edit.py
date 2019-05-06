@@ -42,6 +42,7 @@ class PutApi(PostApi):
 
 class ModelCreateApi(ModelBaseApi, BaseCreateView):
     method = ("POST", "PUT")
+    form_class_create = None
     _model_path = "create"
     _model_title = "创建"
 
@@ -68,9 +69,23 @@ class ModelCreateApi(ModelBaseApi, BaseCreateView):
         self.http_error = form.errors
         return self.render_response(context)
 
+    def get_form_class(self):
+        if self.form_class_create:
+            self.form_class = self.form_class_create
+        return super().get_form_class()
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx.update(self.get_create_context_data(**kwargs))
+        return ctx
+
+    def get_create_context_data(self, **kwargs):
+        return {}
+
 
 class ModelUpdateApi(ModelBaseApi, BaseUpdateView):
     method = ("POST", "PUT")
+    form_class_update = None
     pk_url_kwarg = "id"
     _model_path = "update/(?P<id>\d+)"
     _model_title = "更新"
@@ -98,3 +113,16 @@ class ModelUpdateApi(ModelBaseApi, BaseUpdateView):
         self.http_code = 401
         self.http_error = form.errors
         return self.render_response(context)
+
+    def get_form_class(self):
+        if self.form_class_update:
+            self.form_class = self.form_class_update
+        return super().get_form_class()
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx.update(self.get_update_context_data(**kwargs))
+        return ctx
+
+    def get_update_context_data(self, **kwargs):
+        return {}

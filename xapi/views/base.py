@@ -110,11 +110,11 @@ class ModelBaseApi(BaseApi):
         if not self.model:
             raise Exception('This View has not model to config')
         self._obj_fields = [f.name for f in self.model._meta.get_fields()]
-        self._fields_display = self.display if self.display else self.fields_display()
+        self._fields_display = self.get_display() if self.get_display() else self.fields_display()
         super().__init__(request, *args, **kwargs)
 
     def fields_display(self):
-        fields_display = self.display
+        fields_display = self.get_display()
         if not fields_display:
             fields_display = []
             for f in self.model._meta.local_fields:
@@ -182,3 +182,6 @@ class ModelBaseApi(BaseApi):
         fields_des = self.fields_des
         fields_des.update(ModelFieldsFormat(self.model))
         return fields_des
+
+    def get_display(self):
+        return self.display

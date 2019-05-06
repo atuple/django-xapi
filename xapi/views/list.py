@@ -34,6 +34,7 @@ class ModelListApi(ModelBaseApi, BaseListView):
     model = None
     filter_fields = "ALL"
     filter_fields_exclude = []
+    display_list = []
     ordering = ["-id"]
     _model_path = "list"
     _model_title = "列表"
@@ -50,6 +51,9 @@ class ModelListApi(ModelBaseApi, BaseListView):
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        return self.get_list_context_data(**kwargs)
+
+    def get_list_context_data(self, **kwargs):
         queryset = kwargs.pop('object_list', self.object_list)
         page_size = self.get_paginate_by(queryset)
         context = {}
@@ -112,3 +116,6 @@ class ModelListApi(ModelBaseApi, BaseListView):
         elif isinstance(self.model._meta.get_field(field), (models.DateField, models.DateTimeField)):
             value = TimeFormatFactory.string_to_date(value)
         return value
+
+    def get_display(self):
+        return self.display_list if self.display_list else self.display
