@@ -10,11 +10,12 @@ from django.utils.functional import Promise
 from django.utils.http import urlencode
 from django.utils.safestring import mark_safe
 from django.views.generic import View
-from xapi.util import TimeFormatFactory
+from xapi.util import TimeFormatFactory, ModelFieldsFormat
 import json
 from django.db import models
 from decimal import Decimal
 from django.db.models.fields.files import ImageFieldFile, FileField
+
 
 class BaseApiObject(object):
     def render_response(self, content, response_type='json'):
@@ -43,6 +44,7 @@ class BaseApi(BaseApiObject, View):
     model = None
     middleware = []
     datetime_format = 'string'  # 'string'  or 'timestamp'
+    fields_des = {}
 
     def __init__(self, request, *args, **kwargs):
         if not request.method in self.method:
@@ -87,6 +89,13 @@ class BaseApi(BaseApiObject, View):
     def init_request(self, *args, **kwargs):
         pass
 
+    @property
+    def get_path(self):
+        return self.path
+
+    def get_fields_des(self):
+        return self.fields_des
+
 
 class ModelBaseApi(BaseApi):
     fields = None
@@ -94,6 +103,8 @@ class ModelBaseApi(BaseApi):
     model = None
     display = []
     exclude = []
+    _model_path = ""
+    _model_title = ""
 
     def __init__(self, request, *args, **kwargs):
         if not self.model:
@@ -107,7 +118,7 @@ class ModelBaseApi(BaseApi):
         if not fields_display:
             fields_display = []
             for f in self.model._meta.local_fields:
-                if f.rel is None:
+                if not hasattr(f, "local_related_fields"):
                     fields_display.append(f.name)
                 else:
                     fields_display.append(f.name + "_id")
@@ -149,6 +160,25 @@ class ModelBaseApi(BaseApi):
             for k, v in data.items():
                 obj_dict[k] = self.field_inspect(v)
             return obj_dict
-        elif isinstance(data, (str, bool, float, int,list)):
+        elif isinstance(data, (str, bool, float, int, list)):
             return data
         return None
+
+    @property
+    def get_path(self):
+        if self.path:
+            return self.path
+        else:
+            return self.model.__name__.lower() + "/" + self._model_path
+
+    @property
+    def get_title(self):
+        if self.title:
+            return self.title
+        else:
+            return self.model.__name__.lower() + " " + self._model_title
+
+    def get_fields_des(self):
+        fields_des = self.fields_des
+        fields_des.update(ModelFieldsFormat(self.model))
+        return fields_des

@@ -1,10 +1,37 @@
 from django.views.generic import TemplateView
 from .sites import site
 from markdown import markdown
+from .views import ModelBaseApi, PostApi, PutApi
+
+
+def _get_view_title(cls):
+    if hasattr(cls, "model"):
+        if cls.title:
+            return cls.title
+        else:
+            return cls.model._meta.verbose_name.title() + "" + cls._model_title
+    return cls.title
+
+
+def _get_model_des(view):
+    return ""
+
+
+def _get_form_des(view):
+    return ""
+
+
+def _get_view_des(view):
+    des = ""
+    if issubclass(view, ModelBaseApi):
+        des = _get_model_des(view)
+    if issubclass(view, PostApi) or issubclass(view, PutApi):
+        des = _get_form_des(view)
+    return markdown(des)
 
 
 class HomePageView(TemplateView):
-    template_name = "home.html"
+    template_name = "xapi/home.html"
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data()
@@ -13,7 +40,7 @@ class HomePageView(TemplateView):
 
 
 class RoutePageView(TemplateView):
-    template_name = "route.html"
+    template_name = "xapi/route.html"
 
     def route_path(self, route):
         return self.request.path.split("docs")[0] + route.path + "/" + route.version
@@ -26,7 +53,7 @@ class RoutePageView(TemplateView):
         views = []
         for i in range(0, len(route_views)):
             views.append({
-                "title": route_views[i].title,
+                "title": _get_view_title(route_views[i]),
                 "path": route_views[i].path,
                 "vid": i,
             })
@@ -39,9 +66,10 @@ class RoutePageView(TemplateView):
         if vid:
             view = route_views[int(vid)]
             ctx["view"] = {
-                "title": view.title,
+                "title": _get_view_title(view),
                 "path": view.path,
                 "method": view.method,
-                "des": markdown(view.des),
+                "des": markdown(view.des) if view.des else _get_view_des(view),
+                "fields": view.get_fields_des(view)
             }
         return ctx

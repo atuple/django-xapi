@@ -7,7 +7,7 @@ with open(readme, 'rb') as f:
 
 setup(
     name='xapi',
-    version='0.0.4',
+    version='0.0.5',
     author='sai',
     author_email='3030159@qq.com',
     url='https://github.com/atuple/xapi',

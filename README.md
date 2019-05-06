@@ -23,6 +23,11 @@ from xapi.sites import Router
 from xapi.views import *
 api = Router(path="admin", title="background api ")
 
+
+@api.register_model(Order)
+class OrderApi:
+    pass
+    
 @api.register
 class TestGetApi(GetApi):
     title = "my test get api"
@@ -44,7 +49,9 @@ class TestPostApi(PostApi):
     des = """
     use md bash ~~~!
     
-    """    
+    """
+    #form_class = SomeForm
+        
     def get_context_data(self, **kwargs):        
         data = json.loads(self.request.body)
         print(data)
@@ -81,6 +88,7 @@ class OrderCreateApi(ModelDetailApi):
     des = """
     """
     model = Order        
+
     
 #urls.py
 import xapi

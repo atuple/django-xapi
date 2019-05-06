@@ -17,6 +17,8 @@ class ModelDetailApi(ModelBaseApi, BaseDetailView):
     model = None
     method = ('GET',)
     pk_url_kwarg = "id"
+    _model_path = "detail/(?P<id>\d+)"
+    _model_title = "详情"
 
     def get_context_data(self, **kwargs):
         context = {}

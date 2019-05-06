@@ -1,6 +1,18 @@
 from django.conf import settings
 from django.conf.urls import url, include
 from django.urls import path
+from .views import ModelListApi, ModelCreateApi, ModelDeleteApi, ModelUpdateApi, ModelDetailApi
+
+
+def _get_view_path(cls):
+    if hasattr(cls, "model"):
+        if cls.path:
+            return cls.path
+        else:
+            return cls.model.__name__.lower() + "/" + cls._model_path
+    return cls.path
+
+
 class XApiSite(object):
     def __init__(self):
         self.routes = []
@@ -19,7 +31,7 @@ class XApiSite(object):
                 url(r.path + "/" + r.version, r.urls)
             ]
 
-        return urlpatterns,"xapi","xapi"
+        return urlpatterns, "xapi", "xapi"
 
     def register(self, route):
         self.routes += [route]
@@ -40,6 +52,8 @@ class Router(object):
 
     # 注册视图
     def register_view(self, view):
+        if not hasattr(view, "middleware"):
+            view.middleware = []
         for m in self.middleware:
             view.middleware += self.middleware
         self.registry_views += [view]
@@ -48,7 +62,7 @@ class Router(object):
     def urls(self):
         urlpatterns = []
         for v in self.registry_views:
-            urlpatterns += [url(v.path, v.as_view(), name=v.title)]
+            urlpatterns += [url(_get_view_path(v), v.as_view(), name=v.title)]
         return urlpatterns, 'route', "route"
 
     @property
@@ -58,3 +72,18 @@ class Router(object):
             return f
 
         return decorator
+
+    def _register_model(self, models, admin_class):
+        model_path = admin_class if hasattr(admin_class, "model_path") else models.__name__.lower()
+        for cls_view in [ModelListApi, ModelDetailApi, ModelCreateApi, ModelDeleteApi, ModelUpdateApi]:
+            admin_class.model = models
+            new_cls = type(models.__name__ + cls_view.__name__, (admin_class, cls_view), dict())
+            new_cls.path = _get_view_path(new_cls)
+            self.register_view(new_cls)
+
+    def register_model(self, models, **kwargs):
+
+        def _model_admin_wrapper(admin_class):
+            self._register_model(models, admin_class)
+
+        return _model_admin_wrapper

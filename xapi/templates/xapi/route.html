@@ -17,7 +17,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{% url "docs_home" %}">Xapi Docs</a>
+            <a class="navbar-brand" href="/api/docs">Xapi Docs</a>
         </div>
         {#        <div id="navbar" class="navbar-collapse collapse">#}
         {#            <form class="navbar-form navbar-right">#}
@@ -49,37 +49,66 @@
         <div class="col-md-2 sidebar">
             <ul class="list-group">
                 {% for i in views %}
-                    <li class="list-group-item"><a href="{% url "docs_view" rid i.vid %}">{{ i.title }}</a></li>
+                    <li class="list-group-item"><a href="/api/docs/route/{{ rid }}/{{ i.vid }}">{{ i.title }}</a></li>
                 {% endfor %}
             </ul>
         </div>
         <div class="col-md-10 main">
             {% if view %}
-            <div class="bs-example" data-example-id="hoverable-table">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th width="150">接口名</th>
-                        <th>{{ view.title }}</th>
-                    </tr>
-                    </thead>
+                <div class="bs-example" data-example-id="hoverable-table">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th width="150">接口名</th>
+                            <th>{{ view.title }}</th>
+                        </tr>
+                        </thead>
 
-                    <tbody>
-                    <tr>
-                        <td>地址</td>
-                        <td>{{ route_path }}/{{ view.path }}</td>
-                    </tr>
-                    <tr>
-                        <td>方法</td>
-                        <td>{% for i in view.method %} {{ i }}{% endfor %}</td>
-                    </tr>
-                    <tr>
-                        <td>说明</td>
-                        <td><p>{% autoescape off %}{{ view.des }} {% endautoescape %}</p></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+                        <tbody>
+                        <tr>
+                            <td>地址</td>
+                            <td>{{ route_path }}/{{ view.path }}</td>
+                        </tr>
+                        <tr>
+                            <td>方法</td>
+                            <td>{% for i in view.method %} {{ i }}{% endfor %}</td>
+                        </tr>
+                        <tr>
+                            <td>说明</td>
+                            <td><p>{% autoescape off %}{{ view.des }} {% endautoescape %}</p></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    {% if view.fields %}
+                        <h5 style="margin-left: 9px">数据字典</h5>
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>名称</th>
+                                <th>字段</th>
+                                <th>类型</th>
+                                <th>必填</th>
+                                <th>默认值</th>
+                                <th>值范围</th>
+                                <th>说明</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for k,v in view.fields.items %}
+                                <tr>
+                                    <td>{{ v.verbose_name }}</td>
+                                    <td>{{ v.name }}</td>
+                                    <td>{{ v.type }}</td>
+                                    <td>{{ v.null }}</td>
+                                    <td>{{ v.default }}</td>
+                                    <td>{% autoescape off %}{{ v.choices }}{% endautoescape %}</td>
+                                    <td>{{ v.help_text }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
             {% endif %}
         </div>
     </div>

@@ -1,9 +1,9 @@
 from .base import BaseApi, ModelBaseApi
 from django.views.generic.edit import BaseFormView
-
 from django.views.generic.edit import BaseCreateView, BaseUpdateView
 import json
 from django import forms
+from xapi.util import FormFieldsFormat
 
 
 class PostApi(BaseApi, BaseFormView):
@@ -28,6 +28,12 @@ class PostApi(BaseApi, BaseFormView):
         self.http_error = form.errors
         return self.render_response(context)
 
+    def get_fields_des(self):
+        fields_des = self.fields_des
+        if self.form_class != forms.Form:
+            fields_des.update(FormFieldsFormat(self.form_class))
+        return fields_des
+
 
 class PutApi(PostApi):
     def put(self, *args, **kwargs):
@@ -36,6 +42,8 @@ class PutApi(PostApi):
 
 class ModelCreateApi(ModelBaseApi, BaseCreateView):
     method = ("POST", "PUT")
+    _model_path = "create"
+    _model_title = "创建"
 
     def init_request(self, *args, **kwargs):
         super().init_request()
@@ -64,6 +72,8 @@ class ModelCreateApi(ModelBaseApi, BaseCreateView):
 class ModelUpdateApi(ModelBaseApi, BaseUpdateView):
     method = ("POST", "PUT")
     pk_url_kwarg = "id"
+    _model_path = "update/(?P<id>\d+)"
+    _model_title = "更新"
 
     def init_request(self, *args, **kwargs):
         super().init_request()

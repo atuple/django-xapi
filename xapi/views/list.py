@@ -35,6 +35,8 @@ class ModelListApi(ModelBaseApi, BaseListView):
     filter_fields = "ALL"
     filter_fields_exclude = []
     ordering = ["-id"]
+    _model_path = "list"
+    _model_title = "列表"
 
     def get_count_query(self):
         return self.count_query
