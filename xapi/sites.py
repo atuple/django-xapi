@@ -54,8 +54,7 @@ class Router(object):
     def register_view(self, view):
         if not hasattr(view, "middleware"):
             view.middleware = []
-        for m in self.middleware:
-            view.middleware += self.middleware
+        view.middleware = self.middleware + view.middleware
         self.registry_views += [view]
 
     @property
