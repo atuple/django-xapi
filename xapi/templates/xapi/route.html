@@ -17,7 +17,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/api/docs">Xapi Docs</a>
+            <a class="navbar-brand" href="{{ base_path }}docs">Xapi Docs</a>
         </div>
         {#        <div id="navbar" class="navbar-collapse collapse">#}
         {#            <form class="navbar-form navbar-right">#}
@@ -36,11 +36,11 @@
 <!-- Main jumbotron for a primary marketing message or call to action -->
 <div class="jumbotron" style="height: 90px">
     <div style="text-align: center; padding-top: 20px">
-        路由: {{ route.title }}
-        路径: {{ route.path }}
-        版本: {{ route.version }}
-        接口数量: {{ route.registry_views | length }}
-        说明: {{ route.des }}
+        <span style="margin-right: 15px">路由: {{ route.title }}</span>
+        <span style="margin-right: 15px">路径: {{ route.path }}</span>
+        <span style="margin-right: 15px">版本: {{ route.version }}</span>
+        <span style="margin-right: 15px">接口数量: {{ route.registry_views | length }}</span>
+        <span style="margin-right: 15px">说明: {{ route.des }}</span>
     </div>
 </div>
 
@@ -48,8 +48,10 @@
     <div class="row">
         <div class="col-md-2 sidebar">
             <ul class="list-group">
+                <p><a href="/api/docs/site/{{ sid }}">返回 模块列表</a></p>
+
                 {% for i in views %}
-                    <li class="list-group-item"><a href="/api/docs/route/{{ rid }}/{{ i.vid }}">{{ i.title }}</a></li>
+                    <li class="list-group-item"><a href="/api/docs/site/{{ sid }}/{{ rid }}/{{ i.vid }}">{{ i.title }}</a></li>
                 {% endfor %}
             </ul>
         </div>
@@ -67,7 +69,7 @@
                         <tbody>
                         <tr>
                             <td>地址</td>
-                            <td>{{ route_path }}/{{ view.path }}</td>
+                            <td><a href="{{ route_path }}/{{ view.path }}">{{ route_path }}/{{ view.path }}</a></td>
                         </tr>
                         <tr>
                             <td>方法</td>

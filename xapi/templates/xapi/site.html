@@ -34,22 +34,28 @@
 </nav>
 
 <!-- Main jumbotron for a primary marketing message or call to action -->
-<div class="jumbotron">
-
+<div class="jumbotron" style="height: 90px;font-size: 16px">
+    <div style="text-align: center; padding-top: 20px">
+        <span style="margin-right: 15px">接口: {{ site.title }}</span>
+        <span style="margin-right: 15px">路径: {{ site.path }}</span>
+        <span style="margin-right: 15px">模块数量: {{ site.routes | length }}</span>
+    </div>
 </div>
 
 <div class="container">
     <!-- Example row of columns -->
     <div class="row">
-        {% for i in sites %}
+        {% for i in routes %}
         <div class="col-md-4">
             <h2>{{ i.title }}</h2>
             <p>路径: {{ i.path }}</p>
-            <p>模块数量: {{ i.routes | length }}</p>
-            <p>接口数量: {{ i.views_count }}</p>
-            <p><a class="btn btn-default" href="/api/docs/site/{{forloop.counter0}}" role="button">查看 &raquo;</a></p>
+            <p>版本: {{ i.version }}</p>
+            <p>接口数量: {{ i.registry_views | length }}</p>
+            <p>说明: {{ i.des }}</p>
+            <p><a class="btn btn-default" href="/api/docs/site/{{ sid }}/{{forloop.counter0}}" role="button">查看 &raquo;</a></p>
         </div>
         {% endfor %}
+
     </div>
     <hr>
 

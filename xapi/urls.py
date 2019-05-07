@@ -4,6 +4,7 @@ from .docs import *
 app_name = "xapi"
 urlpatterns = [
     url(r'^$', HomePageView.as_view(), name='docs_home'),
-    url(r'^route/(?P<rid>\d+)/$', RoutePageView.as_view(), name='docs_route'),
-    url(r'^route/(?P<rid>\d+)/(?P<vid>\d+)/$', RoutePageView.as_view(), name='docs_view'),
+    url(r'^site/(?P<sid>\d+)/$', SitePageView.as_view(), name='docs_site'),
+    url(r'^site/(?P<sid>\d+)/(?P<rid>\d+)/$', RoutePageView.as_view(), name='docs_route'),
+    url(r'^site/(?P<sid>\d+)/(?P<rid>\d+)/(?P<vid>\d+)$', RoutePageView.as_view(), name='docs_view'),
 ]

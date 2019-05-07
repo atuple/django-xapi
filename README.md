@@ -20,9 +20,11 @@ class Order(models.Model):
     time = models.DateTimeField()
     
 # yourapp apix.py
-from xapi.sites import Router
+from xapi import xplatform
 from xapi.views import *
-api = Router(path="admin", title="background api ")
+site = xplatform.new_site("web", "web")
+api = site.new_router(title="api_mod_title", path="admin")
+
 
 
 @api.register_model(Order)
@@ -97,7 +99,7 @@ xapi.autodiscover()
 
 urlpatterns = [
     ......
-    url(r'api/', include(xapi.site.urls)),
+    path('api/', xapi.xplatform.urls),
 ]
 
 # web docs

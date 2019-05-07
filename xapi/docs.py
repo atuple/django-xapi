@@ -1,5 +1,5 @@
 from django.views.generic import TemplateView
-from .sites import site
+from .sites import  xplatform
 from markdown import markdown
 from .views import ModelBaseApi, PostApi, PutApi
 
@@ -35,20 +35,37 @@ class HomePageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data()
-        ctx["routes"] = site.routes
+        ctx["base_path"] = self.request.path.split("docs")[0]
+        ctx["sites"] = xplatform.sites
+        return ctx
+
+
+class SitePageView(TemplateView):
+    template_name = "xapi/site.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data()
+        sid = int(kwargs["sid"])
+        ctx["base_path"] = self.request.path.split("docs")[0]
+        ctx["site"] = xplatform.sites[sid]
+        ctx["routes"] = xplatform.sites[sid].routes
+        ctx["sid"] = sid
         return ctx
 
 
 class RoutePageView(TemplateView):
     template_name = "xapi/route.html"
 
-    def route_path(self, route):
-        return self.request.path.split("docs")[0] + route.path + "/" + route.version
+    def route_path(self, route, site_path):
+        return self.request.path.split("docs")[0] + site_path + "/" + route.path + "/" + route.version
 
     def get_context_data(self, **kwargs):
+        sid = int(kwargs["sid"])
         rid = int(kwargs["rid"])
+
         ctx = super().get_context_data()
-        route = site.routes[rid]
+        site_path = xplatform.sites[sid].path
+        route = xplatform.sites[sid].routes[rid]
         route_views = route.registry_views
         views = []
         for i in range(0, len(route_views)):
@@ -59,8 +76,10 @@ class RoutePageView(TemplateView):
             })
         ctx["route"] = route
         ctx["views"] = views
+        ctx["sid"] = sid
         ctx["rid"] = rid
-        ctx["route_path"] = self.route_path(route)
+        ctx["route_path"] = self.route_path(route, site_path)
+        ctx["base_path"] = self.request.path.split("docs")[0]
 
         vid = kwargs.get("vid", None)
         if vid:

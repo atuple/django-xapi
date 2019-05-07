@@ -1,11 +1,10 @@
 VERSION = (0, 1, 0)
+from django.conf import settings
 
-from .sites import XApiSite, site
-
+from .sites import XApiSite, xplatform
 
 class Settings(object):
     pass
-
 
 def autodiscover():
     """
